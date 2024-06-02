@@ -175,3 +175,36 @@ def calculate_max_accuracy(df, group_by_columns):
     max_accuracy.rename(columns={'accuracy': column_name}, inplace=True)
     
     return max_accuracy
+
+def plot_max_accuracy(max_accuracy_df, group_by_columns):
+    """
+    Plot the maximum accuracy for the specified group-by columns.
+
+    Parameters:
+    max_accuracy_df (DataFrame): The DataFrame with the maximum accuracy data.
+    group_by_columns (list): The columns that were grouped by.
+    
+    Returns:
+    None
+    """
+    # Extract the column name for the maximum accuracy
+    column_name = '_'.join(group_by_columns) + '_max_accuracy'
+    
+    plt.figure(figsize=(10, 6))
+    
+    if len(group_by_columns) == 1:
+        # For single column grouping, create a line plot
+        plt.plot(max_accuracy_df[group_by_columns[0]], max_accuracy_df[column_name], marker='o')
+        plt.xlabel(group_by_columns[0])
+    else:
+        # For multiple column grouping, create a scatter plot
+        # Assume the first column is the x-axis and the second column is the color/hue
+        for label, df in max_accuracy_df.groupby(group_by_columns[1]):
+            plt.scatter(df[group_by_columns[0]], df[column_name], label=label)
+        plt.xlabel(group_by_columns[0])
+        plt.legend(title=group_by_columns[1])
+
+    plt.ylabel('Maximum Accuracy')
+    plt.title(f'Maximum Accuracy grouped by {" and ".join(group_by_columns)}')
+    plt.tight_layout()
+    plt.show()
